@@ -4,26 +4,22 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { signUp } from '@/lib/supabase'
-import RelationshipTagPicker from '@/components/RelationshipTagPicker'
-import type { RelationshipTag } from '@/lib/types'
 
 export default function SignupForm() {
   const router = useRouter()
-  const [name, setName]               = useState('')
-  const [email, setEmail]             = useState('')
-  const [password, setPassword]       = useState('')
-  const [tag, setTag]                 = useState<RelationshipTag | null>(null)
-  const [error, setError]             = useState<string | null>(null)
-  const [loading, setLoading]         = useState(false)
+  const [name, setName]         = useState('')
+  const [email, setEmail]       = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError]       = useState<string | null>(null)
+  const [loading, setLoading]   = useState(false)
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (!tag) { setError('Please choose how you know these people.'); return }
     setError(null)
     setLoading(true)
     try {
-      await signUp(email, password, name, tag)
-      router.push('/chat')
+      await signUp(email, password, name)
+      router.push('/home')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Sign up failed.')
     } finally {
@@ -44,7 +40,7 @@ export default function SignupForm() {
           autoComplete="name"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+          className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
         />
       </div>
 
@@ -59,7 +55,7 @@ export default function SignupForm() {
           autoComplete="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+          className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
         />
       </div>
 
@@ -75,11 +71,9 @@ export default function SignupForm() {
           minLength={8}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+          className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
         />
       </div>
-
-      <RelationshipTagPicker value={tag} onChange={setTag} />
 
       {error && (
         <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{error}</p>
