@@ -40,7 +40,7 @@ npm run lint       # ESLint check
 > Update this section as features are completed.
 
 - [x] Project scaffolded (Next.js + TypeScript + Tailwind + Supabase)
-- [x] Auth (sign up, log in, relationship tag selection)
+- [x] Auth (sign up, log in, home page)
 - [ ] Group creation and joining
 - [ ] Real-time messaging
 - [ ] AI batch analysis (every 5 messages)

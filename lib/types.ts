@@ -116,3 +116,42 @@ export interface PauseEvent {
   outcome:          PauseOutcome | null
   triggered_at:     string
 }
+
+// ============================================================
+// API request / response bodies
+// ============================================================
+
+export interface CreateGroupRequest {
+  name:       string
+  group_type: GroupType
+}
+
+export interface CreateGroupResponse {
+  groupId: string
+}
+
+export interface JoinGroupRequest {
+  groupId:         string
+  relationshipTag: RelationshipTag
+}
+
+export interface JoinGroupResponse {
+  groupId: string
+}
+
+// ============================================================
+// Query result shapes
+// ============================================================
+
+export interface MembershipWithGroup {
+  groups: Group
+}
+
+export interface MessageWithSender extends Message {
+  sender_name: string
+}
+
+export interface SendMessageRequest {
+  group_id: string
+  content:  string
+}
