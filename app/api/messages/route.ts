@@ -133,7 +133,39 @@ export async function POST(req: NextRequest) {
 
       try {
         const aiResponse = await analyzeMessages(orderedMessages)
-        console.log('Claude analysis result:', aiResponse)
+        const text = (aiResponse as any)?.content?.[0]?.text ?? ''
+
+        const cleaned = text
+          .replace(/```json\s*/g, '')
+          .replace(/```\s*/g, '')
+          .trim()
+
+        try {
+          const parsed = JSON.parse(cleaned)
+          console.log('Claude parsed JSON:', parsed)
+
+          const meterLevel = parsed.tone === 'tense' ? 'tension' : parsed.tone
+          console.log('Meter level:', meterLevel)
+
+          // ✅ NEW: Save snapshot into conversation_snapshots
+          const { error: snapshotError } = await db
+            .from('conversation_snapshots')
+            .insert({
+              group_id,
+              meter_level: meterLevel,
+              targeted_user_id: null,
+              pattern_summary: parsed.summary,
+              people_involved: [],
+            })
+
+          if (snapshotError) {
+            console.error('[messages] Failed to insert conversation snapshot:', snapshotError)
+          } else {
+            console.log('[messages] Snapshot saved')
+          }
+        } catch (e) {
+          console.error('[messages] Failed to parse Claude JSON:', cleaned)
+        }
       } catch (err) {
         console.error('[messages] Claude call failed:', err)
       }

@@ -3,6 +3,12 @@ import { createSupabaseServerClient } from '@/lib/supabase-server'
 import ChatWindow from '@/components/ChatWindow'
 import type { Group, MessageWithSender } from '@/lib/types'
 
+type SnapshotRow = {
+  meter_level: 'safe' | 'tension' | 'targeted' | 'bullying'
+  pattern_summary: string | null
+  detected_at: string
+}
+
 type MessageRow = {
   id:         string
   group_id:   string
@@ -51,6 +57,18 @@ export default async function ChatPage({
     .order('created_at', { ascending: true })
     .limit(50)
 
+      // Fetch latest conversation snapshot (meter level)
+  const { data: latestSnapshot } = await supabase
+  .from('conversation_snapshots')
+  .select('meter_level, pattern_summary, detected_at')
+  .eq('group_id', id)
+  .order('detected_at', { ascending: false })
+  .limit(1)
+  .maybeSingle<SnapshotRow>()
+
+  const meterLevel = latestSnapshot?.meter_level ?? 'safe'
+  const meterSummary = latestSnapshot?.pattern_summary ?? null
+
   const initialMessages: MessageWithSender[] = (rawMessages ?? []).map((row) => {
     const r = row as unknown as MessageRow
     return {
@@ -64,11 +82,14 @@ export default async function ChatPage({
     }
   })
 
+  
   return (
     <ChatWindow
       group={group}
       initialMessages={initialMessages}
       currentUserId={user.id}
+      meterLevel={meterLevel}
+      meterSummary={meterSummary}
     />
   )
 }

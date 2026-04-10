@@ -6,14 +6,16 @@ export const anthropic = new Anthropic({
 
 export async function analyzeMessages(messages: string[]) {
   const prompt = `
-Analyze the following group chat messages.
+Return ONLY valid JSON. No markdown. No backticks. No extra commentary.
 
-Return a JSON object with:
-- summary (short explanation of conversation)
-- tone (safe, tense, targeted, bullying)
-- likely_targeted_user (or null)
+Schema:
+{
+  "summary": string,
+  "tone": "safe" | "tense" | "targeted" | "bullying",
+  "likely_targeted_user": string | null
+}
 
-Messages:
+Chat transcript:
 ${messages.join('\n')}
 `
 

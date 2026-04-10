@@ -41,10 +41,10 @@ npm run lint       # ESLint check
 
 - [x] Project scaffolded (Next.js + TypeScript + Tailwind + Supabase)
 - [x] Auth (sign up, log in, home page)
-- [ ] Group creation and joining
-- [ ] Real-time messaging
-- [ ] AI batch analysis (every 5 messages)
-- [ ] Bullying meter UI
+- [x] Group creation and joining
+- [x] Real-time messaging
+- [x] AI batch analysis (every 5 messages)
+- [x] Bullying meter UI
 - [ ] Guidance cards
 - [ ] Pause button
 - [ ] Communication score
