@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import type { Group, MessageWithSender, SendMessageRequest } from '@/lib/types'
+import GuidanceCardBanner from '@/components/GuidanceCardBanner'
 
 // Shape returned by the Supabase nested select in the real-time handler
 type MessageRow = {
@@ -205,6 +206,9 @@ export default function ChatWindow({
           </div>
         </div>
       )}
+
+      {/* ── Guidance card banner ── */}
+      <GuidanceCardBanner groupId={group.id} currentUserId={currentUserId} />
 
       {/* ── Messages ── */}
       <div className="flex-1 overflow-y-auto py-4">

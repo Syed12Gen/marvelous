@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createSupabaseServerClient, createSupabaseServiceClient } from '@/lib/supabase-server'
 import type { SendMessageRequest, MessageWithSender } from '@/lib/types'
-import { analyzeMessages } from '@/lib/claude'
+import { analyzeMessages, bullyEmpathyMirror } from '@/lib/claude'
 
 // The shape Supabase returns when we join messages with the users table.
 // We use this locally to safely read the nested `users.name` field.
@@ -147,8 +147,8 @@ export async function POST(req: NextRequest) {
           const meterLevel = parsed.tone === 'tense' ? 'tension' : parsed.tone
           console.log('Meter level:', meterLevel)
 
-          // ✅ NEW: Save snapshot into conversation_snapshots
-          const { error: snapshotError } = await db
+          // Save snapshot into conversation_snapshots, capturing the new row's id
+          const { data: snapshotData, error: snapshotError } = await db
             .from('conversation_snapshots')
             .insert({
               group_id,
@@ -157,11 +157,140 @@ export async function POST(req: NextRequest) {
               pattern_summary: parsed.summary,
               people_involved: [],
             })
+            .select('id')
+            .single()
 
           if (snapshotError) {
             console.error('[messages] Failed to insert conversation snapshot:', snapshotError)
           } else {
             console.log('[messages] Snapshot saved')
+
+            // ── Guidance cards ────────────────────────────────────────────
+            try {
+              if (meterLevel === 'targeted' || meterLevel === 'bullying') {
+                const snapshotId = (snapshotData as { id: string }).id
+
+                // 3. Fetch group type (needed for victim card copy + empathy mirror)
+                const { data: groupData } = await db
+                  .from('groups')
+                  .select('group_type')
+                  .eq('id', group_id)
+                  .single()
+                const groupType =
+                  (groupData as { group_type: string } | null)?.group_type ?? 'friend_group'
+
+                // 4. Fetch group members with names
+                type MemberRow = { user_id: string; users: { name: string } | null }
+                const { data: membersRaw, error: membersError } = await db
+                  .from('group_members')
+                  .select('user_id, users(name)')
+                  .eq('group_id', group_id)
+
+                if (membersError || !membersRaw || membersRaw.length === 0) {
+                  console.error('[guidance] error fetching members', membersError)
+                } else {
+                  const members = membersRaw as unknown as MemberRow[]
+
+                  // 5. Determine victimUserId by name-matching Claude's output
+                  const likelyTargeted =
+                    typeof parsed.likely_targeted_user === 'string'
+                      ? parsed.likely_targeted_user.trim().toLowerCase()
+                      : null
+                  let victimUserId: string | null = null
+                  if (likelyTargeted) {
+                    const match = members.find(
+                      (m) => (m.users?.name ?? '').trim().toLowerCase() === likelyTargeted,
+                    )
+                    victimUserId = match?.user_id ?? null
+                  }
+
+                  // 6. Bully = sender of the message just inserted
+                  const bullyUserId = user.id
+
+                  // 7. Bystanders = everyone else
+                  const excluded = new Set(
+                    [victimUserId, bullyUserId].filter((id): id is string => id !== null),
+                  )
+                  const bystanderIds = members
+                    .map((m) => m.user_id)
+                    .filter((id) => !excluded.has(id))
+
+                  // 8. Card content
+                  const groupTypeSuffix: Record<string, string> = {
+                    classroom:    'You have the right to feel safe at school.',
+                    workplace:    'You have the right to a safe work environment.',
+                    friend_group: "Real friends don't treat each other this way.",
+                    family:       'You deserve to feel safe even at home.',
+                  }
+                  const victimContent =
+                    `We see what's happening here. What's being done to you is not okay. ` +
+                    `You didn't cause this and you don't deserve it. ` +
+                    (groupTypeSuffix[groupType] ?? 'You deserve to feel safe.')
+
+                  const victimName = victimUserId
+                    ? (members.find((m) => m.user_id === victimUserId)?.users?.name ?? null)
+                    : null
+                  const bystanderContent = victimName
+                    ? `Someone in this group — ${victimName} — may be feeling targeted. Even sending them a quick private message saying 'hey, you okay?' would make a real difference.`
+                    : `Someone in this group may be feeling targeted. Even sending them a quick private message saying 'hey, you okay?' would make a real difference.`
+
+                  const bullyContent =
+                    meterLevel === 'bullying'
+                      ? await bullyEmpathyMirror({ message: trimmedContent, groupType })
+                      : 'Your recent message may have landed harder than you intended. Consider how it felt to receive it.'
+
+                  // Build the full list of cards to attempt
+                  type CardSpec = { user_id: string; card_type: string; content: string }
+                  const cards: CardSpec[] = []
+                  if (victimUserId) {
+                    cards.push({ user_id: victimUserId, card_type: 'victim',    content: victimContent })
+                  }
+                  cards.push(   { user_id: bullyUserId,  card_type: 'bully',     content: bullyContent })
+                  for (const id of bystanderIds) {
+                    cards.push( { user_id: id,            card_type: 'bystander', content: bystanderContent })
+                  }
+
+                  // 9 + 10. Anti-spam check then insert
+                  let insertedCount = 0
+                  for (const card of cards) {
+                    // Skip if an undismissed card already exists for this user in this group
+                    const { data: existing } = await db
+                      .from('guidance_cards')
+                      .select('id')
+                      .eq('user_id', card.user_id)
+                      .eq('group_id', group_id)
+                      .is('dismissed_at', null)
+                      .limit(1)
+                      .maybeSingle()
+
+                    if (existing) continue
+
+                    const { error: cardInsertError } = await db
+                      .from('guidance_cards')
+                      .insert({
+                        user_id:     card.user_id,
+                        group_id,
+                        snapshot_id: snapshotId,
+                        card_type:   card.card_type,
+                        content:     card.content,
+                        shown_at:    new Date().toISOString(),
+                      })
+
+                    if (cardInsertError) {
+                      console.error('[guidance] error inserting card:', cardInsertError)
+                    } else {
+                      insertedCount++
+                    }
+                  }
+
+                  // 11. Summary log
+                  console.log(`[guidance] created ${insertedCount} cards for snapshot ${snapshotId}`)
+                }
+              }
+            } catch (guidanceErr) {
+              console.error('[guidance] error:', guidanceErr)
+            }
+            // ── End guidance cards ────────────────────────────────────────
           }
         } catch (e) {
           console.error('[messages] Failed to parse Claude JSON:', cleaned)
