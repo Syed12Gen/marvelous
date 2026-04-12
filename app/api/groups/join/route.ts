@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
       id:           crypto.randomUUID(),
       group_id:     groupId,
       user_id:      user.id,
-      current_role: 'neutral',
+      member_role: 'neutral',
       is_defender:  false,
       joined_at:    new Date().toISOString(),
     })
