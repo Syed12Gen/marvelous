@@ -1,36 +1,78 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Marvelous 🟣  
+### Real-time bullying pattern detection + private, role-aware guidance in group chats
 
-## Getting Started
+Marvelous is a real-time group chat system that detects **bullying/targeting dynamics** as they emerge and supports safer conversations through **private interventions** — without public shaming or censorship.
 
-First, run the development server:
+The core idea: bullying escalates in group spaces because signals are subtle, roles are unclear, and bystanders often don’t know what to do **in the moment**. Marvelous is built to surface risk early and guide action privately.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🎯 Why this matters (research)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Bullying is common and has measurable consequences:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Global:** UNESCO reports **~1 in 3** young teens have experienced bullying worldwide.   
+- **U.S. high school:** CDC YRBS highlights show bullying at school in the **~15–19%** range.   
+- **U.S. ages 12–18:** NCES reports **~19%** of students ages 12–18 were bullied at school (2021–22).   
 
-## Learn More
+Interventions can move outcomes:
+- A major meta-analysis found school-based antibullying programs reduce **victimization ~15–16%** and **perpetration ~19–20%** on average.   
 
-To learn more about Next.js, take a look at the following resources:
+> **Important:** Marvelous is not claiming those exact percentages for the app yet. Those numbers show what structured interventions can achieve at scale. Marvelous aims to measure impact once deployed.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🧠 How Marvelous helps (feature → research rationale)
 
-## Deploy on Vercel
+### 1) 🟢 Live bullying meter (safe → tension → targeted → bullying)
+**What it does:** Tracks conversation risk in real time and updates a simple meter state.  
+**Why it helps:** Effective prevention often starts with **early awareness** and timely response. A live meter provides an “early warning” signal without exposing raw AI scores or publicly labeling anyone.   
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### 2) 🔒 Private, role-aware guidance (targeted / aggressor / bystanders)
+**What it does:** When a pattern is detected, each role receives private guidance:
+- **Targeted person:** validation + options + support steps  
+- **Aggressor:** reflection + de-escalation prompts (“empathy mirror”)  
+- **Bystanders:** one low-risk action they can take now  
+
+**Why it helps:** Many successful interventions are **multi-component** — shaping the environment and peer responses, not just punishing. Role-aware guidance operationalizes that idea inside a chat context.   
+
+---
+
+### 3) ⏸️ Pause button (pre-send friction)
+**What it does:** Adds a short delay before hostile messages send.  
+**Why it helps:** Escalation is often impulsive. Small friction can reduce heat-of-the-moment sending and create a chance to self-correct. (Effect size depends on implementation; Marvelous will measure it.)   
+
+---
+
+### 4) 📈 Communication score dashboard (feedback loop over time)
+**What it does:** A personal dashboard showing communication trends across groups.  
+**Why it helps:** Behavior change typically needs **repeated reinforcement**, not a one-off intervention. Longitudinal feedback loops help people recognize patterns and improve over time.   
+
+---
+
+## 📊 Measurement (how impact would be validated)
+Marvelous is built to **measure** outcomes instead of guessing. Example metrics:
+- reduction in `bullying` meter events per group over time  
+- increase in supportive language after bystander prompts  
+- reduced repeated targeting of the same person  
+- user-reported safety + willingness to participate in group chats  
+
+---
+
+## 📚 Sources
+- UNESCO: bullying prevalence globally (~1 in 3).   
+- CDC YRBS: bullying at school (~15–19% range).   
+- NCES: ~19% bullied at school (ages 12–18).   
+- Gaffney et al. meta-analysis: ~15–16% victimization reduction, ~19–20% perpetration reduction.   
+- (Optional) evidence on feedback/behavior change loops.   
+
+---
+
+## 🚧 Roadmap (high level)
+- ✅ Real-time chat + AI batch analysis  
+- ✅ Live meter updates via snapshots  
+- ✅ Guidance cards (private banners per role)  
+- ⏳ Pause button  
+- ⏳ Communication score dashboard  
