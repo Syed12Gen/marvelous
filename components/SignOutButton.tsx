@@ -14,7 +14,13 @@ export default function SignOutButton() {
   return (
     <button
       onClick={handleSignOut}
-      className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+      className="rounded-full font-semibold transition-opacity hover:opacity-80"
+      style={{
+        background: 'rgba(255,255,255,0.14)',
+        color: '#ffffff',
+        fontSize: 13,
+        padding: '6px 14px',
+      }}
     >
       Sign out
     </button>

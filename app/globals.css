@@ -3,6 +3,28 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  /* Brand palette */
+  --brand-primary:        #534AB7;
+  --brand-primary-hover:  #453DA0;
+  --brand-primary-deep:   #36307A;
+  --brand-primary-soft:   #7A71D4;
+  --brand-primary-tint:   #EBE9F7;
+  --brand-primary-tint-2: #F5F3FC;
+  --brand-primary-200:    #BFB9E4;
+  --brand-primary-300:    #9990D4;
+
+  /* Ink scale */
+  --ink-900: #1C1B2E;
+  --ink-700: #3F3D5C;
+  --ink-500: #6B6880;
+  --ink-400: #9996AD;
+  --ink-200: #E4E1F0;
+  --ink-100: #F1EFF8;
+  --ink-50:  #FAF9FD;
+
+  /* Easing */
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 @theme inline {
@@ -22,5 +44,32 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, Arial, sans-serif;
+}
+
+/* ── Message entrance animations ── */
+@keyframes msg-in-own {
+  from { transform: translateY(8px) scale(0.92); opacity: 0; }
+  to   { transform: translateY(0)   scale(1);    opacity: 1; }
+}
+@keyframes msg-in-other {
+  from { transform: translateY(6px); opacity: 0; }
+  to   { transform: translateY(0);   opacity: 1; }
+}
+
+.msg-enter-own {
+  animation: msg-in-own 260ms var(--ease-spring) both;
+}
+.msg-enter-other {
+  animation: msg-in-other 260ms var(--ease-spring) both;
+}
+
+/* ── Empty chat pulse dot ── */
+@keyframes pulse-scale {
+  0%, 100% { transform: scale(1);     }
+  50%       { transform: scale(1.214); }
+}
+.animate-pulse-dot {
+  transform-origin: 60px 60px;
+  animation: pulse-scale 2.8s ease-in-out infinite;
 }

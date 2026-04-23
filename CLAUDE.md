@@ -45,7 +45,9 @@ npm run lint       # ESLint check
 - [x] Real-time messaging
 - [x] AI batch analysis (every 5 messages)
 - [x] Bullying meter UI
-- [ ] Guidance cards
+- [x] Guidance cards
+- [x] Vercel deployment
+- [ ] Personal analytics dashboard
 - [ ] Pause button
 - [ ] Communication score
 - [ ] Evidence vault

@@ -18,11 +18,13 @@ interface Props {
   currentUserId: string
 }
 
-const CARD_STYLE: Record<string, { bg: string; border: string; label: string; labelColor: string }> = {
-  victim:    { bg: 'bg-purple-50', border: 'border-purple-200', label: 'A private note for you', labelColor: 'text-purple-700' },
-  bully:     { bg: 'bg-amber-50',  border: 'border-amber-200',  label: 'A moment to reflect',    labelColor: 'text-amber-700'  },
-  bystander: { bg: 'bg-green-50',  border: 'border-green-200',  label: 'You can help',            labelColor: 'text-green-700'  },
+const CARD_STYLE: Record<string, { bg: string; border: string; labelColor: string }> = {
+  victim:    { bg: '#EBE9F7', border: '#BFB9E4', labelColor: '#453DA0' },
+  bully:     { bg: '#FFF3D9', border: '#FFD88A', labelColor: '#8A5A0B' },
+  bystander: { bg: '#E8F1E8', border: '#B9D8BA', labelColor: '#2F6B36' },
 }
+
+const FALLBACK_STYLE = CARD_STYLE['bystander']
 
 export default function GuidanceCardBanner({ groupId, currentUserId }: Props) {
   const [card, setCard] = useState<GuidanceCard | null>(null)
@@ -82,19 +84,34 @@ export default function GuidanceCardBanner({ groupId, currentUserId }: Props) {
 
   if (!card) return null
 
-  const style = CARD_STYLE[card.card_type] ?? CARD_STYLE['bystander']
+  const style = CARD_STYLE[card.card_type] ?? FALLBACK_STYLE
 
   return (
     <div className="shrink-0 px-4 pt-2 pb-1">
-      <div className={`mx-auto max-w-3xl rounded-xl border px-4 py-3 ${style.bg} ${style.border}`}>
+      <div
+        className="mx-auto max-w-3xl border px-4 py-3"
+        style={{
+          background:   style.bg,
+          borderColor:  style.border,
+          borderRadius: 20,
+        }}
+      >
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <p className={`text-xs font-semibold ${style.labelColor}`}>{style.label}</p>
-            <p className="mt-1 text-sm text-gray-700">{card.content}</p>
+            <p
+              className="uppercase font-bold tracking-wide"
+              style={{ fontSize: 12, color: style.labelColor }}
+            >
+              A moment to reflect
+            </p>
+            <p className="mt-1 text-sm" style={{ color: '#3F3D5C' }}>
+              {card.content}
+            </p>
           </div>
           <button
             onClick={handleDismiss}
-            className="shrink-0 text-gray-400 hover:text-gray-600 transition-colors"
+            className="shrink-0 transition-opacity hover:opacity-60"
+            style={{ color: style.labelColor, fontSize: 15, lineHeight: 1 }}
             aria-label="Dismiss"
           >
             ✕
