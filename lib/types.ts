@@ -7,7 +7,7 @@ export type MeterLevel      = 'safe' | 'tension' | 'targeted' | 'bullying'
 export type MemberRole      = 'neutral' | 'victim' | 'bully' | 'bystander' | 'defender'
 export type CardType        = 'victim' | 'bully' | 'bystander'
 export type PauseOutcome    = 'cancelled' | 'rephrased' | 'sent_anyway'
-export type GroupType       = 'classroom' | 'workplace' | 'friend_group' | 'family'
+export type GroupType       = 'classroom' | 'workplace' | 'friend_group' | 'family' | 'sports_team'
 
 export interface User {
   id:                  string

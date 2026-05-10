@@ -9,6 +9,7 @@ const GROUP_TYPES: { value: GroupType; label: string }[] = [
   { value: 'workplace',    label: 'Workplace'    },
   { value: 'friend_group', label: 'Friend group' },
   { value: 'family',       label: 'Family'       },
+  { value: 'sports_team',  label: 'Sports team'  },
 ]
 
 export default function CreateGroupForm() {

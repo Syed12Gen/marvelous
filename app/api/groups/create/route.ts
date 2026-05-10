@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createSupabaseServerClient, createSupabaseServiceClient } from '@/lib/supabase-server'
 import type { CreateGroupRequest, CreateGroupResponse } from '@/lib/types'
 
-const VALID_GROUP_TYPES = ['classroom', 'workplace', 'friend_group', 'family'] as const
+const VALID_GROUP_TYPES = ['classroom', 'workplace', 'friend_group', 'family', 'sports_team'] as const
 
 export async function POST(req: NextRequest) {
   // Log env availability up front

@@ -16,6 +16,7 @@ const GROUP_TYPE_LABELS: Record<GroupType, string> = {
   workplace:    'Workplace',
   friend_group: 'Friend group',
   family:       'Family',
+  sports_team:  'Sports team',
 }
 
 interface Props {
