@@ -47,7 +47,7 @@ body {
   font-family: var(--font-geist-sans), ui-sans-serif, system-ui, Arial, sans-serif;
 }
 
-/* ── Message entrance animations ── */
+/* â”€â”€ Message entrance animations â”€â”€ */
 @keyframes msg-in-own {
   from { transform: translateY(8px) scale(0.92); opacity: 0; }
   to   { transform: translateY(0)   scale(1);    opacity: 1; }
@@ -64,7 +64,7 @@ body {
   animation: msg-in-other 260ms var(--ease-spring) both;
 }
 
-/* ── Empty chat pulse dot ── */
+/* â”€â”€ Empty chat pulse dot â”€â”€ */
 @keyframes pulse-scale {
   0%, 100% { transform: scale(1);     }
   50%       { transform: scale(1.214); }
@@ -72,4 +72,53 @@ body {
 .animate-pulse-dot {
   transform-origin: 60px 60px;
   animation: pulse-scale 2.8s ease-in-out infinite;
+}
+
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   LANDING PAGE â€” dark marketing/login utilities (Lovable design)
+   Scoped to landing components only; doesn't affect app screens.
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+.animate-fade-in { animation: fade-in 0.5s ease-out both; }
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1);    }
+}
+.animate-scale-in { animation: scale-in 0.35s var(--ease-spring) both; }
+
+.text-gradient-violet {
+  background: linear-gradient(135deg, #a78bfa, #60a5fa);
+  -webkit-background-clip: text;
+          background-clip: text;
+  color: transparent;
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.03);
+  -webkit-backdrop-filter: blur(20px);
+          backdrop-filter: blur(20px);
+  border: 1px solid rgba(139, 92, 246, 0.2);
+}
+
+.shadow-glow    { box-shadow: 0 0 40px -10px rgba(139, 92, 246, 0.4); }
+.shadow-glow-lg { box-shadow: 0 20px 60px -10px rgba(139, 92, 246, 0.5); }
+
+.wave-mask-card {
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%, black 8%, black 28%,
+    transparent 42%, transparent 58%,
+    black 72%, black 92%, transparent 100%
+  );
+          mask-image: linear-gradient(
+    to right,
+    transparent 0%, black 8%, black 28%,
+    transparent 42%, transparent 58%,
+    black 72%, black 92%, transparent 100%
+  );
 }
